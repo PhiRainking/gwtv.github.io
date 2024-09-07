@@ -86,6 +86,27 @@
             text-decoration: none;
             cursor: pointer;
         }
+        /* 前后按钮 */
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            margin-top: -22px;
+            color: #f1f1f1;
+            font-weight: bold;
+            font-size: 18px;
+            transition: 0.6s ease;
+            border-radius: 3px;
+            user-select: none;
+        }
+        .next {
+            right: 0;
+        }
+        .prev:hover, .next:hover {
+            background-color: rgba(0,0,0,0.8);
+        }
     </style>
 </head>
 <body>
@@ -94,38 +115,72 @@
         <div class="spinner"></div>
         <p>如果不能自动跳转至官网<a href="http://gwtvweb.web2.natgo.cn/">点击这里</a>就可以到GWTV官网啦！</p>
         <p>Rainking:终于维护好网站了！</p>
-        
-        <!-- 触发模态窗口的图片 -->
-        <img id="myImg" src="/advertisement.jpg" alt="Description" style="width:100%;max-width:300px;cursor:pointer;">
+
+        <!-- 画廊图片 -->
+        <img class="gallery-img" src="/advertisement1.jpg" alt="Description 1" style="width:100%;max-width:300px;cursor:pointer;">
+        <img class="gallery-img" src="/advertisement2.jpg" alt="Description 2" style="width:100%;max-width:300px;cursor:pointer;">
+        <img class="gallery-img" src="/advertisement3.jpg" alt="Description 3" style="width:100%;max-width:300px;cursor:pointer;">
 
         <!-- 模态窗口 -->
         <div id="myModal" class="modal">
             <span class="close">&times;</span>
             <img class="modal-content" id="img01">
-            <div id="caption"></div>
+            <a class="prev">&#10094;</a>
+            <a class="next">&#10095;</a>
         </div>
     </div>
 
     <script>
         // 获取模态窗口
         var modal = document.getElementById("myModal");
-
-        // 获取触发模态窗口的图片
-        var img = document.getElementById("myImg");
         var modalImg = document.getElementById("img01");
-        var captionText = document.getElementById("caption");
-
-        // 当用户点击图片时，打开模态窗口
-        img.onclick = function(){
+        var closeBtn = document.getElementsByClassName("close")[0];
+        var prevBtn = document.getElementsByClassName("prev")[0];
+        var nextBtn = document.getElementsByClassName("next")[0];
+        var currentIndex = 0;
+        var images = document.getElementsByClassName("gallery-img");
+        
+        function openModal(index) {
             modal.style.display = "block";
-            modalImg.src = this.src;
-            captionText.innerHTML = this.alt;
+            modalImg.src = images[index].src;
+            currentIndex = index;
         }
 
-        // 当用户点击 (x) 关闭模态窗口
-        var span = document.getElementsByClassName("close")[0];
-        span.onclick = function() { 
+        function closeModal() {
             modal.style.display = "none";
+        }
+
+        function showPrev() {
+            currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
+            modalImg.src = images[currentIndex].src;
+        }
+
+        function showNext() {
+            currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
+            modalImg.src = images[currentIndex].src;
+        }
+
+        // 给每张图片添加点击事件
+        for (var i = 0; i < images.length; i++) {
+            images[i].onclick = (function(i) {
+                return function() {
+                    openModal(i);
+                }
+            })(i);
+        }
+
+        // 关闭模态窗口
+        closeBtn.onclick = closeModal;
+
+        // 前后按钮功能
+        prevBtn.onclick = showPrev;
+        nextBtn.onclick = showNext;
+
+        // 点击模态窗口外部关闭
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
         }
     </script>
 </body>
